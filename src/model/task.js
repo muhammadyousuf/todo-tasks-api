@@ -8,18 +8,18 @@ const taskSchema = mongoose.Schema({
     ref: "User",
     lowercase: true,
     trim: true,
-    type: "String"
+    type: String
   },
   order: {
     default: 1,
-    type: "Number"
+    type: Number
   },
   completed: {
-    type: "Boolean",
+    type: Boolean,
     defaut: 1
   },
   dateTime: {
-    type: "Date"
+    type: Date
   }
 });
 

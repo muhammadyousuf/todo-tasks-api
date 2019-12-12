@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const user = require("./src/routes/user");
+const task = require("./src/routes/task");
 
 dotenv.config({ path: "./nodemon.env" });
 
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/user", user);
+app.use("task", task);
 
 app.use((req, res, next) => {
   const error = new Error("Not Found");
