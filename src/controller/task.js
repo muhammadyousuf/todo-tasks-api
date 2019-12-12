@@ -43,6 +43,7 @@ exports.get_all_task = (req, res, next) => {
 };
 
 exports.create_task = (req, res, next) => {
+  console.log("userId", req.body.userId);
   User.findById(req.body.userId)
     .then(user => {
       if (!user) {
@@ -50,7 +51,7 @@ exports.create_task = (req, res, next) => {
           message: "Not found User"
         });
       }
-      const task = new Order({
+      const task = new Task({
         _id: mongoose.Types.ObjectId(),
         title: req.body.title,
         order: req.body.order,
@@ -63,12 +64,12 @@ exports.create_task = (req, res, next) => {
     .then(result => {
       res.status(201).json({
         message: "Add Order Suucessfully",
-        createdOrder: {
+        createdTask: {
           _id: result._id,
           title: result.title,
           order: result.order,
           completed: result.completed,
-          dateTime: result.dateTime,
+          dateTime: result.dateTime
         },
         request: {
           type: "GET",
