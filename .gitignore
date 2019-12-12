@@ -4,6 +4,7 @@
 
 # Xcode
 #
+nodemon.env
 build/
 *.pbxuser
 !default.pbxuser
