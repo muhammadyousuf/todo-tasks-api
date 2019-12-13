@@ -16,10 +16,17 @@ const taskSchema = mongoose.Schema({
   },
   completed: {
     type: Boolean,
-    defaut: 1
+    default: false,
+    required: true
   },
   dateTime: {
-    type: Date
+    type: Date,
+    default: new Date()
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
   }
 });
 

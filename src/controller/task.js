@@ -3,13 +3,10 @@ const mongoose = require("mongoose");
 const User = require("../model/user");
 
 exports.get_all_task = (req, res, next) => {
-  Task.find()
+  Task.find({ user: req.params.user })
     .select("title order completed dateTime  _id")
-    .populate("user", "name email")
     .exec()
     .then(docs => {
-      console.log("Get all Documents ", docs);
-
       if (docs.length >= 0) {
         const response = {
           count: docs.length,
@@ -18,11 +15,9 @@ exports.get_all_task = (req, res, next) => {
               title: doc.title,
               order: doc.order,
               completed: doc.completed,
-              dateTime: doc.dateTime,
-              _id: doc._id,
-              request: {
-                type: "GET",
-                url: "http://localhost:5000/task/" + doc._id
+              sys: {
+                id: doc._id,
+                createdTime: doc.dateTime
               }
             };
           })
@@ -43,7 +38,6 @@ exports.get_all_task = (req, res, next) => {
 };
 
 exports.create_task = (req, res, next) => {
-  console.log("userId", req.body.userId);
   User.findById(req.body.userId)
     .then(user => {
       if (!user) {
@@ -56,24 +50,23 @@ exports.create_task = (req, res, next) => {
         title: req.body.title,
         order: req.body.order,
         completed: req.body.completed,
-        dateTime: req.body.dateTime
+        dateTime: req.body.dateTime,
+        user: req.body.userId
       });
-      console.log("order", task);
+      console.log("Task", task);
       return task.save();
     })
     .then(result => {
       res.status(201).json({
         message: "Add Order Suucessfully",
         createdTask: {
-          _id: result._id,
           title: result.title,
           order: result.order,
-          completed: result.completed,
-          dateTime: result.dateTime
+          completed: result.completed
         },
-        request: {
-          type: "GET",
-          url: "http://localhost:5000/task/" + result._id
+        sys: {
+          id: result._id,
+          createdTime: result.dateTime
         }
       });
     })
@@ -85,7 +78,7 @@ exports.create_task = (req, res, next) => {
     });
 };
 
-exports.orders_get_order = (req, res, next) => {
+exports.get_single_task = (req, res, next) => {
   Order.findById(req.params.orderId)
     .select("quantity product _id")
     .populate("product", "name price")
