@@ -16,15 +16,19 @@ mongoose.connect(process.env.MONGOLAB_URI, {
 
 mongoose.Promise = global.Promise;
 app.use(morgan("dev"));
-app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
+
 app.use(express.static(__dirname));
 app.use("/image", express.static("image"));
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization, multipart/form-data"
   );
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");

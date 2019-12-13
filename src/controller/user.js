@@ -105,3 +105,32 @@ exports.get_user = (req, res, next) => {
       });
     });
 };
+
+exports.update_user = async (req, res, next) => {
+  console.log("req.body", req.body);
+  const _id = req.params.user;
+
+  const updates = Object.keys(JSON.parse(JSON.stringify(req.body)));
+
+  const allowUpdates = ["name", "contact", "userImage"];
+  const isValidOperator = updates.every(update =>
+    allowUpdates.includes(update)
+  );
+
+  if (!isValidOperator) {
+    return res.status(400).send({ error: "Invalid Updates!" });
+  }
+  try {
+    const user = await User.findByIdAndUpdate(_id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    if (!user) {
+      return res.status(404).send([]);
+    }
+    console.log(user);
+    res.status(200).send(user);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
