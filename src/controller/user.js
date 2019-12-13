@@ -79,3 +79,29 @@ exports.login_user = (req, res, next) => {
       })
     );
 };
+
+exports.get_user = (req, res, next) => {
+  console.log(req.params);
+  User.findById(req.params.user)
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({
+          message: "Not found User"
+        });
+      }
+      res.status(200).json({
+        user: {
+          id: user._id,
+          name: user.name,
+          contact: user.contact,
+          email: user.email,
+          userImage: user.userImage
+        }
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
+};
