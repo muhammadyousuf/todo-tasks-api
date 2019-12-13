@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/user", user);
-app.use("/task", task);
+app.use("/tasks", task);
 
 app.use((req, res, next) => {
   const error = new Error("Not Found");

@@ -4,7 +4,7 @@ const User = require("../model/user");
 
 exports.get_all_task = (req, res, next) => {
   Task.find({ user: req.params.user })
-    .select("title order completed dateTime  _id")
+    .select("title order completed dateTime _id")
     .exec()
     .then(docs => {
       if (docs.length >= 0) {
@@ -38,7 +38,7 @@ exports.get_all_task = (req, res, next) => {
 };
 
 exports.create_task = (req, res, next) => {
-  User.findById(req.body.userId)
+  User.findById(req.params.user)
     .then(user => {
       if (!user) {
         return res.status(404).json({
@@ -51,9 +51,8 @@ exports.create_task = (req, res, next) => {
         order: req.body.order,
         completed: req.body.completed,
         dateTime: req.body.dateTime,
-        user: req.body.userId
+        user: req.params.user
       });
-      console.log("Task", task);
       return task.save();
     })
     .then(result => {
@@ -79,21 +78,32 @@ exports.create_task = (req, res, next) => {
 };
 
 exports.get_single_task = (req, res, next) => {
-  Order.findById(req.params.orderId)
-    .select("quantity product _id")
-    .populate("product", "name price")
+  console.log(req.params);
+  User.findById(req.params.user).then(user => {
+    if (!user) {
+      return res.status(404).json({
+        message: "Not found User"
+      });
+    }
+  });
+  Task.findById(req.params.taskId)
+    .select("title order completed dateTime _id")
     .exec()
-    .then(order => {
-      if (!order) {
+    .then(task => {
+      if (!task) {
         return res.status(404).json({
-          message: "Order not found"
+          message: "Task not found"
         });
       }
       res.status(200).json({
-        order: order,
-        request: {
-          type: "GET",
-          url: "http://localhost:5000/order"
+        task: {
+          title: task.title,
+          order: task.order,
+          completed: task.completed
+        },
+        sys: {
+          id: task._id,
+          createdTime: task.dateTime
         }
       });
     })
@@ -104,17 +114,19 @@ exports.get_single_task = (req, res, next) => {
     });
 };
 
-exports.delete_order = (req, res, next) => {
-  Order.deleteOne({ _id: req.params.orderId })
+exports.delete_task = (req, res, next) => {
+  User.findById(req.params.user).then(user => {
+    if (!user) {
+      return res.status(404).json({
+        message: "Not found User"
+      });
+    }
+  });
+  Task.deleteOne({ _id: req.params.taskId })
     .exec()
     .then(result => {
       res.status(200).json({
-        message: "Order Deleted",
-        request: {
-          type: "POST",
-          url: "http://localhost:5000/order",
-          body: { productId: "ID", quantity: "Number" }
-        }
+        message: "Task Deleted"
       });
     })
     .catch(err => {
