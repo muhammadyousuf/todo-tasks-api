@@ -11,6 +11,6 @@ router.get("/:user/task/:taskId", Task_Controller.get_single_task);
 
 router.delete("/:user/task/:taskId", Task_Controller.delete_task);
 
-//router.patch("/:user/task/:taskId", Task_Controller.update_task);
+router.patch("/:user/task/:taskId", Task_Controller.update_task);
 
 module.exports = router;

@@ -124,9 +124,48 @@ exports.delete_task = (req, res, next) => {
   });
   Task.deleteOne({ _id: req.params.taskId })
     .exec()
-    .then(result => {
+    .then(() => {
       res.status(200).json({
         message: "Task Deleted"
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
+};
+
+exports.update_task = (req, res, next) => {
+  User.findById(req.params.user).then(user => {
+    if (!user) {
+      return res.status(404).json({
+        message: "Not found User"
+      });
+    }
+  });
+  let _id = req.params.taskId;
+  Task.findByIdAndUpdate(
+    _id,
+    { completed: req.body.completed },
+    {
+      new: true,
+      runValidators: true
+    }
+  )
+    .select("title order completed dateTime _id")
+    .exec()
+    .then(task => {
+      res.status(200).json({
+        task: {
+          title: task.title,
+          order: task.order,
+          completed: task.completed
+        },
+        sys: {
+          id: task._id,
+          createdTime: task.dateTime
+        }
       });
     })
     .catch(err => {
