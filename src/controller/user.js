@@ -107,7 +107,6 @@ exports.get_user = (req, res, next) => {
 };
 
 exports.update_user = async (req, res, next) => {
-  console.log("req.body", req.body);
   const _id = req.params.user;
 
   const updates = Object.keys(JSON.parse(JSON.stringify(req.body)));
@@ -121,10 +120,18 @@ exports.update_user = async (req, res, next) => {
     return res.status(400).send({ error: "Invalid Updates!" });
   }
   try {
-    const user = await User.findByIdAndUpdate(_id, req.body, {
-      new: true,
-      runValidators: true
-    });
+    const user = await User.findByIdAndUpdate(
+      _id,
+      {
+        name: req.body.name,
+        contact: req.body.contact,
+        userImage: req.file.path
+      },
+      {
+        new: true,
+        runValidators: true
+      }
+    );
     if (!user) {
       return res.status(404).send([]);
     }

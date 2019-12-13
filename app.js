@@ -11,15 +11,18 @@ dotenv.config({ path: "./nodemon.env" });
 
 mongoose.connect(process.env.MONGOLAB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify: false
 });
 
 mongoose.Promise = global.Promise;
 app.use(morgan("dev"));
 
-app.use(bodyParser.urlencoded({
-  extended: false
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: false
+  })
+);
 app.use(bodyParser.json());
 
 app.use(express.static(__dirname));
